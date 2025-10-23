@@ -1,21 +1,21 @@
 {
-    "compilerOptions": {
-        "module": "CommonJS",
-        "target": "ES2021",
-        "moduleResolution": "node",
-        "baseUrl": "./",
-        "outDir": "./dist",
-        "sourceMap": true,
-        "strict": false,
-        "skipLibCheck": true,
-        "esModuleInterop": true,
-        "emitDecoratorMetadata": true,
-        "experimentalDecorators": true,
-        "allowSyntheticDefaultImports": true,
-        "incremental": true,
-        "removeComments": true,
-        "declaration": false
-    },
-    "include": ["src/**/*"],
-    "exclude": ["node_modules", "dist"]
+  "compilerOptions": {
+    "module": "CommonJS",
+    "target": "ES2021",
+    "moduleResolution": "node",
+    "baseUrl": "./",
+    "outDir": "./dist",
+    "sourceMap": true,
+    "strict": false,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "incremental": true,
+    "removeComments": true,
+    "declaration": false
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
 }

@@ -1,20 +1,23 @@
-import { Module } from '@nestjs/common'
-import { ConfigModule } from '@nestjs/config'
-import { appConfig } from './config/env'
+import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { appConfig } from './config/env';
 
-import { UsersModule } from './modules/users/users.module'
-import { AuthModule } from './modules/auth/auth.module'
+import { UsersModule } from './modules/users/users.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { CommonModule } from './modules/common/common.module';
+import { DbModule } from './modules/db/db.module';
 
 @Module({
-    imports: [
-        ConfigModule.forRoot({
-            isGlobal: true,
-            load: [appConfig],
-        }),
-        // add dần các module domain chỗ này
-        UsersModule,
-        AuthModule
-	],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [appConfig],
+    }),
+    // add dần các module domain chỗ này
+    UsersModule,
+    AuthModule,
+    CommonModule,
+    DbModule,
+  ],
 })
-
 export class AppModule {}

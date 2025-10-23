@@ -33,7 +33,7 @@ export class UsersService {
         return this.users.find(user => user.id === id);
     }
 
-    toPulic(user: User) {
+    toPublic(user: User) {
         if (!user)
             return null
         const {passwordHash, ...rest} = user;

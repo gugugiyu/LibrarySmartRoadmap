@@ -4,6 +4,11 @@ import { appConfig } from './config/env'
 
 import { UsersModule } from './modules/users/users.module'
 import { AuthModule } from './modules/auth/auth.module'
+import { AiGatewayModule } from './modules/ai-gateway/ai-gateway.module'
+import { ResourcesModule } from './modules/resources/resources.module'
+import { SearchModule } from './modules/search/search.module'
+import { StepsModule } from './modules/steps/steps.module'
+import { RoadmapsModule } from './modules/roadmaps/roadmaps.module'
 
 @Module({
     imports: [
@@ -13,7 +18,12 @@ import { AuthModule } from './modules/auth/auth.module'
         }),
         // add dần các module domain chỗ này
         UsersModule,
-        AuthModule
+        AuthModule,
+        AiGatewayModule,
+        ResourcesModule,
+        SearchModule,
+        StepsModule,
+        RoadmapsModule,
 	],
 })
 

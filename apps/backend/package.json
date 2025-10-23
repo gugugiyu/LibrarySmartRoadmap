@@ -21,12 +21,16 @@
     "@nestjs/jwt": "^11.0.1",
     "@nestjs/passport": "^11.0.5",
     "@nestjs/platform-express": "^11.1.7",
+    "@nestjs/typeorm": "^11.0.0",
     "axios": "^1.12.2",
     "bcryptjs": "^3.0.2",
+    "module-alias": "^2.2.3",
+    "mongodb": "^6.20.0",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.2"
+    "rxjs": "^7.8.2",
+    "typeorm": "^0.3.27"
   },
   "devDependencies": {
     "@nestjs/cli": "^11.0.10",

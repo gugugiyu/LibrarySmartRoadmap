@@ -1,0 +1,66 @@
+services:
+  # frontend:
+  #   build: ../apps/frontend
+  #   container_name: frontend
+  #   image: smartroadmap-frontend:${ENV_MODE}
+  #   restart: always
+  #   ports:
+  #     - "${FRONTEND_PORT}:80"
+  #   depends_on:
+  #     - backend
+  #   networks:
+  #     - app-network
+  #   environment:
+  #     - ENV_MODE=${ENV_MODE}
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 3
+
+  backend:
+    build:
+      context: ..
+      dockerfile: ./apps/backend/Dockerfile
+    container_name: backend
+    image: smartroadmap-backend:${ENV_MODE}
+    restart: always
+    env_file:
+      - ../apps/backend/.env
+    environment:
+      NODE_ENV: ${ENV_MODE}
+      MONGO_URI: mongodb://mongo:27017/smartroadmap
+    ports:
+      - "${BACKEND_PORT}:${BACKEND_PORT}"
+    depends_on:
+      mongo:
+        condition: service_healthy
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${BACKEND_PORT}/common/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  mongo:
+    image: mongo:7
+    container_name: mongo
+    restart: always
+    volumes:
+      - ${DB_MOUNT_PATH}:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: smartroadmap
+    ports:
+      - "${MONGO_PORT}:27017"
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+networks:
+  app-network:
+    driver: bridge

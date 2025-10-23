@@ -5,6 +5,7 @@ import { appConfig } from './config/env';
 import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { CommonModule } from './modules/common/common.module';
+import { DbModule } from './modules/db/db.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { CommonModule } from './modules/common/common.module';
     UsersModule,
     AuthModule,
     CommonModule,
+    DbModule,
   ],
 })
 export class AppModule {}

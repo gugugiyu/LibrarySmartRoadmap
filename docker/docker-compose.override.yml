@@ -1,0 +1,55 @@
+services:
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #     target: dev
+  #   volumes:
+  #     - ../apps/frontend:/app
+  #     - /app/node_modules
+  #   command: npm run dev
+  #   ports:
+  #     - "${FRONTEND_PORT}:5173"   # Example for Vite or React dev server
+  #   environment:
+  #     - NODE_ENV=development
+  #   depends_on:
+  #     - backend
+  #   networks:
+  #     - app-network
+
+  backend:
+    build:
+      context: ..
+      dockerfile: ./apps/backend/Dockerfile
+    restart: always
+    container_name: backend-dev
+    volumes:
+      - ../apps/backend:/app
+      - /app/node_modules
+    command: npm run start:dev
+    ports:
+      - "${BACKEND_PORT}:4000"
+    environment:
+      - NODE_ENV=development
+      - MONGO_URI=mongodb://mongo:27017/SmartRoadmap
+    depends_on:
+      - mongo
+    networks:
+      - app-network
+
+  mongo:
+    image: mongo:7
+    container_name: mongo
+    restart: always
+    volumes:
+      - ${DB_MOUNT_PATH}:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: SmartRoadmap
+    ports:
+      - "${MONGO_PORT}:27017"
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 30s
+      timeout: 10s
+      retries: 5

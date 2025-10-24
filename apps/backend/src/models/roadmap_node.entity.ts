@@ -1,44 +1,54 @@
 import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  OneToMany,
-  OneToOne,
-  JoinColumn,
-  ManyToOne,
-  CreateDateColumn,
+    Entity,
+    Column,
+    PrimaryGeneratedColumn,
+    ManyToOne,
+    CreateDateColumn,
+    UpdateDateColumn,
+    DeleteDateColumn,
+    OneToMany,
 } from 'typeorm';
 import { Roadmap } from './roadmap.entity';
 import { TextualInformation } from './textual_information.entity';
 
-@Entity()
+@Entity({ name: 'roadmap_nodes' })
 export class RoadmapNode {
-  @PrimaryGeneratedColumn()
-  id: number;
+    @PrimaryGeneratedColumn()
+    id: number;
 
-  @OneToOne(() => RoadmapNode, { nullable: true })
-  parent_node_id: RoadmapNode;
+    @ManyToOne(() => Roadmap, (r) => r.nodes, { nullable: false })
+    roadmap: Roadmap;
 
-  @OneToOne(() => Roadmap)
-  @JoinColumn()
-  roadmap_id: Roadmap;
+    @ManyToOne(() => RoadmapNode, (n) => n.children, { nullable: true })
+    parent: RoadmapNode | null;
 
-  @Column()
-  order: number;
+    @OneToMany(() => RoadmapNode, (n) => n.parent)
+    children: RoadmapNode[];
 
-  // List of resources
-  @ManyToOne(() => TextualInformation)
-  info_id: TextualInformation;
+    @Column({ type: 'int' })
+    order: number;
 
-  @Column()
-  isCompleted: boolean;
+    @Column({ type: 'varchar', length: 255, nullable: true })
+    title: string | null;
 
-  @CreateDateColumn()
-  deleted_at: Date;
+    @Column({ type: 'text', nullable: true })
+    goal: string | null;
 
-  @CreateDateColumn()
-  modified_at: Date;
+    @Column({ type: 'simple-json', nullable: true })
+    keywords: string[] | null; // MVP
 
-  @CreateDateColumn()
-  created_at: Date;
+    @ManyToOne(() => TextualInformation, { nullable: true })
+    info: TextualInformation | null; // default tài liệu (top-1)
+
+    @Column({ type: 'boolean', default: false })
+    is_completed: boolean;
+
+    @CreateDateColumn({ type: 'timestamptz' })
+    created_at: Date;
+
+    @UpdateDateColumn({ type: 'timestamptz' })
+    modified_at: Date;
+
+    @DeleteDateColumn({ type: 'timestamptz', nullable: true })
+    deleted_at?: Date | null;
 }

@@ -1,23 +1,27 @@
-import { Module } from '@nestjs/common'
-import { SearchService } from './search.service'
-import { SearchController } from './search.controller'
-import { ResourcesModule } from '../resources/resources.module'
-import { LexicalRepo } from './repositories/lexical.repository'
-import { VectorRepo } from './repositories/vector.repository'
-import { AiGatewayModule } from '../ai-gateway/ai-gateway.module'
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { SearchService } from './search.service';
+import { SearchController } from './search.controller';
+import { ResourcesModule } from '../resources/resources.module';
+import { LexicalRepo } from './repositories/lexical.repository';
+import { VectorRepo } from './repositories/vector.repository';
+import { AiGatewayModule } from '../ai-gateway/ai-gateway.module';
+import { TextualInformation } from '../../models/textual_information.entity';
+import { Book } from '../../models/book.entity';
+import { Article } from '../../models/article.entity';
 
 @Module({
-    imports: [ResourcesModule, AiGatewayModule],
+    imports: [
+        ResourcesModule,
+        AiGatewayModule,
+        TypeOrmModule.forFeature([TextualInformation, Book, Article]),
+    ],
     providers: [
-        SearchService,
         { provide: 'LexicalRepository', useClass: LexicalRepo },
         { provide: 'VectorRepository', useClass: VectorRepo },
-        // alias để constructor type là interface vẫn inject được
-        { provide: LexicalRepo, useExisting: 'LexicalRepository' },
-        { provide: VectorRepo, useExisting: 'VectorRepository' },
+        SearchService,
     ],
     controllers: [SearchController],
     exports: [SearchService],
 })
-
 export class SearchModule {}

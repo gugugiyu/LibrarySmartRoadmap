@@ -1,78 +1,95 @@
-import { Injectable } from "@nestjs/common"
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { TextualInformation, TextualContentType } from '../../models/textual_information.entity';
+import { Book } from '../../models/book.entity';
+import { Article } from '../../models/article.entity';
 
-export type Resource = {
-    id: string;
+export type ResourceDTO = {
+    id: number;
     title: string;
-    authors ?: string[];
-    type: 'book' | 'paper' | 'article' | 'video';
-    source ?: string;
-    url ?: string;
-    pages ?: number;
-    words ?: number;
-    difficulty ?: 'beginner' | 'intermediate' | 'advanced';
-    tags ?: string[];
-}
+    type: 'book' | 'article';
+    authors?: string[];
+    author?: string;
+    publisher?: string;
+    url?: string;
+    year?: number;
+    doi?: string;
+};
 
 @Injectable()
 export class ResourcesService {
-    private data: Resource[] = [
-        {
-            id: 'res_1',
-            title: 'Xác suất cơ bản cho sinh viên năm nhất',
-            type: 'book',
-            pages: 180,
-            difficulty: 'beginner',
-            tags: ['xác suất', 'biến cố', 'quy tắc cộng', 'quy tắc nhân'],
-            url: 'https://example.com/prob-basic',
-        },
-        {
-            id: 'res_2',
-            title: 'Bài tập nhập môn Xác suất',
-            type: 'article',
-            words: 6500,
-            difficulty: 'beginner',
-            tags: ['bài tập', 'xác suất', 'ví dụ']
-        },
-        {
-            id: 'res_3',
-            title: 'Kỹ thuật đếm và tổ hợp nâng cao',
-            type: 'paper',
-            words: 9000,
-            difficulty: 'intermediate',
-            tags: ['tổ hợp', 'đếm', 'xác suất'],
-        },
-        {
-            id: 'res_4',
-            title: 'Ứng dụng xác suất trong học máy',
-            type: 'article',
-            words: 8000,
-            difficulty: 'advanced',
-            tags: ['ứng dụng', 'học máy', 'bayes'],
-        },
-    ]
+    constructor(
+        @InjectRepository(TextualInformation)
+        private readonly tiRepo: Repository<TextualInformation>,
+        @InjectRepository(Book) private readonly bookRepo: Repository<Book>,
+        @InjectRepository(Article) private readonly artRepo: Repository<Article>,
+    ) {}
 
-    listAll(): Resource[] {
-        return this.data
+    async listAll(): Promise<ResourceDTO[]> {
+        const tis = await this.tiRepo.find({ take: 100 });
+        return this.hydrate(tis);
     }
 
-    findById(id: string): Resource | undefined {
-        return this.data.find(resource => resource.id === id)
+    async findById(id: number) {
+        const ti = await this.tiRepo.findOne({ where: { id } });
+        if (!ti) return undefined;
+        const [item] = await this.hydrate([ti]);
+        return item;
     }
 
-    searchSimple(q: string, filters: any = {}): Resource[] {
-        const query = (q || '').toLowerCase().trim()
-        const tokens = query.split(/\s+/).filter(Boolean)
+    async searchSimple(q: string, filters: any = {}): Promise<ResourceDTO[]> {
+        const qb = this.tiRepo.createQueryBuilder('ti').where('ti.deleted_at IS NULL');
 
-        return this.data.filter(resource => {
-            const hay = (resource.title + ' ' + (resource.tags || []).join(' ')).toLowerCase()
+        if (q && q.trim()) {
+            qb.andWhere('ti.title ILIKE :q', { q: `%${q}%` });
+        }
+        if (filters?.type) {
+            qb.andWhere('ti.info_type = :t', { t: filters.type });
+        }
 
-            const hitPhrase = !query || hay.includes(query)
-            const hitAnyToken = tokens.length === 0 || tokens.some(t => hay.includes(t))
+        qb.take(100);
+        const list = await qb.getMany();
+        // scoring sau -> ở search repo
+        return this.hydrate(list);
+    }
 
-            const okDifficulty = !filters?.difficulty || resource.difficulty === filters.difficulty
-            const okType = !filters?.type || resource.type === filters.type
+    private async hydrate(tis: TextualInformation[]): Promise<ResourceDTO[]> {
+        if (!tis.length) return [];
+        const ids = tis.map((t) => t.id);
 
-            return (hitPhrase || hitAnyToken) && okDifficulty && okType
-        })
+        const [books, arts] = await Promise.all([
+            this.bookRepo.createQueryBuilder('b').where('b.id IN (:...ids)', { ids }).getMany(),
+            this.artRepo.createQueryBuilder('a').where('a.id IN (:...ids)', { ids }).getMany(),
+        ]);
+
+        const bmap = new Map(books.map((b) => [b.id, b]));
+        const amap = new Map(arts.map((a) => [a.id, a]));
+
+        return tis.map((t) => {
+            if (t.info_type === TextualContentType.BOOK) {
+                const b = bmap.get(t.id);
+                return {
+                    id: t.id,
+                    title: t.title,
+                    type: 'book',
+                    author: b?.author,
+                    publisher: b?.publisher,
+                    url: t.source_url,
+                    year: b?.publication_year,
+                };
+            } else {
+                const a = amap.get(t.id);
+                return {
+                    id: t.id,
+                    title: t.title,
+                    type: 'article',
+                    authors: a?.authors ? a.authors.split(',').map((s) => s.trim()) : [],
+                    publisher: a?.publisher || undefined,
+                    url: t.source_url,
+                    doi: a?.doi,
+                };
+            }
+        });
     }
 }

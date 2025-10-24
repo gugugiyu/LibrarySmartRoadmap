@@ -1,33 +1,37 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany, CreateDateColumn } from 'typeorm';
+import {
+    Entity,
+    Column,
+    PrimaryGeneratedColumn,
+    CreateDateColumn,
+    UpdateDateColumn,
+    DeleteDateColumn,
+} from 'typeorm';
 
 export enum TextualContentType {
-  BOOK,
-  ARTICLE,
+    BOOK = 'book',
+    ARTICLE = 'article',
 }
 
-@Entity()
+@Entity({ name: 'textual_information' })
 export class TextualInformation {
-  @PrimaryGeneratedColumn()
-  id: number;
+    @PrimaryGeneratedColumn()
+    id: number;
 
-  @Column()
-  title: string;
+    @Column({ type: 'varchar', length: 500 })
+    title: string;
 
-  @Column('varchar', { unique: true })
-  source_url: string;
+    @Column({ type: 'varchar', length: 1024, unique: true })
+    source_url: string;
 
-  @Column('enum', {
-    enum: TextualContentType,
-    nullable: false,
-  })
-  info_type: TextualContentType;
+    @Column({ type: 'enum', enum: TextualContentType })
+    info_type: TextualContentType;
 
-  @CreateDateColumn()
-  crawled_at: Date;
+    @CreateDateColumn({ type: 'timestamptz' })
+    created_at: Date;
 
-  @CreateDateColumn()
-  modified_at: Date;
+    @UpdateDateColumn({ type: 'timestamptz' })
+    modified_at: Date;
 
-  @CreateDateColumn()
-  created_at: Date;
+    @DeleteDateColumn({ type: 'timestamptz', nullable: true })
+    deleted_at?: Date | null;
 }

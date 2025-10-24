@@ -1,42 +1,23 @@
-import { Injectable } from "@nestjs/common"
-import * as bcrypt from 'bcryptjs'
-
-export type User = {
-    id: string;
-    email: string;
-    name: string;
-    passwordHash: string;
-    level ?: string;
-    background ?: string;
-    pace ?: string;
-};
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { User } from '../../models/user.entity';
 
 @Injectable()
 export class UsersService {
-    private users: User[] = [
-        {
-            id: 'oantalavantestcase36',
-            email: 'test@gmail.com',
-            name: 'Test User',
-            passwordHash: bcrypt.hashSync('123456', 10),
-            level: 'freshman',
-            background: 'none',
-            pace: '30'      // Pages per day
-        },
-    ];
+    constructor(@InjectRepository(User) private readonly repo: Repository<User>) {}
 
-    async findByEmail(email: string): Promise<User | undefined> {
-        return this.users.find(user => user.email.toLowerCase() === email.toLowerCase());
+    findByEmail(email: string) {
+        return this.repo.findOne({ where: { email } });
     }
 
-    async findById(id: string): Promise<User | undefined> {
-        return this.users.find(user => user.id === id);
+    findById(id: string) {
+        return this.repo.findOne({ where: { id } });
     }
 
-    toPulic(user: User) {
-        if (!user)
-            return null
-        const {passwordHash, ...rest} = user;
+    toPublic(user: User | null | undefined) {
+        if (!user) return null;
+        const { password_hash, ...rest } = user as any;
         return rest;
     }
 }

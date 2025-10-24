@@ -1,20 +1,27 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Entity, PrimaryColumn, OneToOne, JoinColumn, Column } from 'typeorm';
 import { TextualInformation } from './textual_information.entity';
 
-@Entity()
-export class Article extends TextualInformation {
-  @Column('varchar')
-  journal_name: string;
+@Entity({ name: 'article' })
+export class Article {
+    @PrimaryColumn()
+    id: number; // shared PK với textual_information.id
 
-  @Column('varchar', { unique: true })
-  doi: string;
+    @OneToOne(() => TextualInformation, { onDelete: 'CASCADE' })
+    @JoinColumn({ name: 'id' })
+    base: TextualInformation;
 
-  @Column('text')
-  authors: string;
+    @Column({ type: 'varchar', length: 255 })
+    journal_name: string;
 
-  @Column()
-  publisher: string;
+    @Column({ type: 'varchar', length: 255, unique: true })
+    doi: string;
 
-  @Column('datetime')
-  publication_date: number;
+    @Column({ type: 'text' })
+    authors: string;
+
+    @Column({ type: 'varchar', length: 255, nullable: true })
+    publisher: string | null;
+
+    @Column({ type: 'timestamptz', nullable: true })
+    publication_date: Date | null;
 }

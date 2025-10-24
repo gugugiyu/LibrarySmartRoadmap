@@ -1,35 +1,39 @@
 {
-  "name": "svnn-monorepo",
-  "private": true,
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
-  "scripts": {
-    "prepare": "husky",
-    "dev:be": "npm run start:dev -w apps/backend",
-    "dev:fe": "npm run dev -w apps/frontend",
-    "dev:ai": "npm run dev -w apps/ai",
-    "dev": "concurrently -n BE, FE -c blue,green \"npm:dev:be\" \"npm:dev:fe\"",
-    "dev:all": "concurrently -n BE, FE, AI -c blue,green,magenta \"npm:dev:be\" \"npm:dev:fe\" \"npm:dev:ai\"",
-    "build": "npm run build -w apps/backend && npm run build -w apps/frontend",
-    "build:all": "npm run build -w apps/backend && npm run build -w apps/frontend && npm run build -w apps/ai",
-    "format": "prettier --write .",
-    "lint-staged": "lint-staged",
-    "lint": "eslint .",
-    "typecheck": "tsc -b"
-  },
-  "lint-staged": {
-    "**/*.{ts,tsx,js,jsx,json,md,css,scss}": "prettier --write"
-  },
-  "devDependencies": {
-    "@commitlint/cli": "^19.8.1",
-    "@commitlint/config-conventional": "^19.8.1",
-    "concurrently": "^9.2.1",
-    "eslint": "^9.38.0",
-    "husky": "^9.1.7",
-    "lint-staged": "^15.5.2",
-    "prettier": "^3.6.2",
-    "typescript": "^5.9.3"
-  }
+    "name": "svnn-monorepo",
+    "private": true,
+    "workspaces": [
+        "apps/*",
+        "packages/*"
+    ],
+    "scripts": {
+        "prepare": "husky",
+        "dev:be": "npm run start:dev -w apps/backend",
+        "dev:fe": "npm run dev -w apps/frontend",
+        "dev:ai": "npm run dev -w apps/ai",
+        "dev": "concurrently -n BE, FE -c blue,green \"npm:dev:be\" \"npm:dev:fe\"",
+        "dev:all": "concurrently -n BE, FE, AI -c blue,green,magenta \"npm:dev:be\" \"npm:dev:fe\" \"npm:dev:ai\"",
+        "build": "npm run build -w apps/backend && npm run build -w apps/frontend",
+        "build:all": "npm run build -w apps/backend && npm run build -w apps/frontend && npm run build -w apps/ai",
+        "format": "prettier --write .",
+        "lint-staged": "lint-staged",
+        "lint": "eslint .",
+        "typecheck": "tsc -b"
+    },
+    "lint-staged": {
+        "**/*.{ts,tsx,js,jsx,json,md,css,scss}": "prettier --write"
+    },
+    "devDependencies": {
+        "@commitlint/cli": "^19.8.1",
+        "@commitlint/config-conventional": "^19.8.1",
+        "concurrently": "^9.2.1",
+        "eslint": "^9.38.0",
+        "husky": "^9.1.7",
+        "lint-staged": "^15.5.2",
+        "prettier": "^3.6.2",
+        "typescript": "^5.9.3"
+    },
+    "dependencies": {
+        "pg": "^8.16.3",
+        "typeorm": "^0.3.27"
+    }
 }

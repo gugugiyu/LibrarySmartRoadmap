@@ -1,25 +1,35 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn } from 'typeorm';
+import {
+    Entity,
+    Column,
+    PrimaryGeneratedColumn,
+    CreateDateColumn,
+    UpdateDateColumn,
+    DeleteDateColumn,
+} from 'typeorm';
 
-@Entity()
+@Entity({ name: 'users' })
 export class User {
-  @PrimaryGeneratedColumn()
-  id: number;
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
 
-  @Column()
-  username: string;
+    @Column({ type: 'varchar', length: 255, unique: true })
+    email: string;
 
-  @Column()
-  password: string;
+    @Column({ type: 'varchar', length: 255 })
+    username: string;
 
-  @Column()
-  email: string;
+    @Column({ type: 'varchar', length: 255 })
+    password_hash: string;
 
-  @Column('datetime', { nullable: false })
-  enrollment_date: Date;
+    @Column({ type: 'date', nullable: true })
+    enrollment_date: Date | null;
 
-  @CreateDateColumn()
-  modified_at: Date;
+    @CreateDateColumn({ type: 'timestamptz' })
+    created_at: Date;
 
-  @CreateDateColumn()
-  created_at: Date;
+    @UpdateDateColumn({ type: 'timestamptz' })
+    modified_at: Date;
+
+    @DeleteDateColumn({ type: 'timestamptz', nullable: true })
+    deleted_at?: Date | null;
 }

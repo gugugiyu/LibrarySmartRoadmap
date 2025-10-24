@@ -1,37 +1,46 @@
 import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  OneToMany,
-  OneToOne,
-  JoinColumn,
-  ManyToOne,
-  CreateDateColumn,
+    Entity,
+    Column,
+    PrimaryGeneratedColumn,
+    OneToOne,
+    JoinColumn,
+    ManyToOne,
+    CreateDateColumn,
+    UpdateDateColumn,
+    DeleteDateColumn,
+    OneToMany,
 } from 'typeorm';
 import { RoadMapPrompt } from './roadmap_prompt.entity';
 import { User } from './user.entity';
+import { RoadmapNode } from './roadmap_node.entity';
 
-@Entity()
+@Entity({ name: 'roadmaps' })
 export class Roadmap {
-  @PrimaryGeneratedColumn()
-  id: number;
+    @PrimaryGeneratedColumn()
+    id: number;
 
-  @OneToOne(() => RoadMapPrompt)
-  @JoinColumn()
-  prompt_id: RoadMapPrompt;
+    @OneToOne(() => RoadMapPrompt, { nullable: false })
+    @JoinColumn()
+    prompt: RoadMapPrompt;
 
-  @ManyToOne(() => User)
-  user: User;
+    @ManyToOne(() => User, { nullable: false })
+    user: User;
 
-  @Column()
-  title: string;
+    @Column({ type: 'varchar', length: 255 })
+    title: string;
 
-  @Column('text')
-  description: string;
+    @Column({ type: 'text', nullable: true })
+    description: string | null;
 
-  @CreateDateColumn()
-  modified_at: Date;
+    @OneToMany(() => RoadmapNode, (n) => n.roadmap)
+    nodes: RoadmapNode[];
 
-  @CreateDateColumn()
-  created_at: Date;
+    @CreateDateColumn({ type: 'timestamptz' })
+    created_at: Date;
+
+    @UpdateDateColumn({ type: 'timestamptz' })
+    modified_at: Date;
+
+    @DeleteDateColumn({ type: 'timestamptz', nullable: true })
+    deleted_at?: Date | null;
 }

@@ -1,57 +1,55 @@
 import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  OneToMany,
-  ManyToOne,
-  ManyToMany,
-  JoinTable,
-  CreateDateColumn,
+    Entity,
+    Column,
+    PrimaryGeneratedColumn,
+    ManyToOne,
+    ManyToMany,
+    JoinTable,
+    CreateDateColumn,
+    UpdateDateColumn,
+    DeleteDateColumn,
 } from 'typeorm';
 import { User } from './user.entity';
 import { TextualInformation } from './textual_information.entity';
 
-export enum SELF_ACCESSMENT_LEVEL {
-  EXPERT,
-  HIGHLY_PROFICIENT,
-  ADVANCED,
-  INTERMEDIATE,
-  BEGINNERS,
+export enum SELF_ASSESSMENT_LEVEL {
+    EXPERT = 'expert',
+    HIGHLY_PROFICIENT = 'highly_proficient',
+    ADVANCED = 'advanced',
+    INTERMEDIATE = 'intermediate',
+    BEGINNERS = 'beginners',
 }
 
-@Entity()
+@Entity({ name: 'roadmap_prompts' })
 export class RoadMapPrompt {
-  @PrimaryGeneratedColumn()
-  id: number;
+    @PrimaryGeneratedColumn()
+    id: number;
 
-  @ManyToOne(() => User)
-  user: User;
+    @ManyToOne(() => User, { nullable: false })
+    user: User;
 
-  @Column('varchar', {
-    length: 100,
-    nullable: false,
-  })
-  major: string;
+    @Column('varchar', { length: 100 })
+    major: string;
 
-  @Column('text', { nullable: false })
-  background: string;
+    @Column('text')
+    background: string;
 
-  @Column('enum', {
-    enum: SELF_ACCESSMENT_LEVEL,
-    default: SELF_ACCESSMENT_LEVEL.BEGINNERS,
-  })
-  self_accessment_level: SELF_ACCESSMENT_LEVEL;
+    @Column({ type: 'enum', enum: SELF_ASSESSMENT_LEVEL, default: SELF_ASSESSMENT_LEVEL.BEGINNERS })
+    self_assessment_level: SELF_ASSESSMENT_LEVEL;
 
-  @Column()
-  daily_study_hours: number;
+    @Column({ type: 'float', default: 1 })
+    daily_study_hours: number;
 
-  @ManyToMany(() => TextualInformation)
-  @JoinTable()
-  has_previously_read: TextualInformation[];
+    @ManyToMany(() => TextualInformation)
+    @JoinTable()
+    has_previously_read: TextualInformation[];
 
-  @CreateDateColumn()
-  modified_at: Date;
+    @CreateDateColumn({ type: 'timestamptz' })
+    created_at: Date;
 
-  @CreateDateColumn()
-  created_at: Date;
+    @UpdateDateColumn({ type: 'timestamptz' })
+    modified_at: Date;
+
+    @DeleteDateColumn({ type: 'timestamptz', nullable: true })
+    deleted_at?: Date | null;
 }

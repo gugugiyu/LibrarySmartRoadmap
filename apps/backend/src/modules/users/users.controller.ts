@@ -12,6 +12,6 @@ export class UsersController {
     async me(@Req() req: any) {
         const userId = req.user?.sub;
         const user = await this.users.findById(userId);
-        return this.users.toPulic(user);
+        return this.users.toPublic(user);
     }
 }

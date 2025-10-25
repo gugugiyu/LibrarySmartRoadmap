@@ -3,21 +3,22 @@ from app.extensions import db
 from app.models.prompt import RoadmapPrompt
 from app.models.textual_information import Book
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import joinedload, selectinload
 
 logger = logging.getLogger(__name__)
 
 def create_prompt(data):
     """
     Tạo một RoadmapPrompt mới.
-    'data' chứa các trường và một list 'prior_reading_ids'.
+    'data' chứa các trường và một list 'prior_reading_ids'[cite: 5].
     """
     try:
         new_prompt = RoadmapPrompt(
-            id=data.get('id'),
+            user_id=data.get('user_id'),
             major=data.get('major'),
             background=data.get('background'),
             self_assessment_level=data.get('self_assessment_level'),
-            daily_study_hours=data.get('daily_study_hours')
+            daily_study_hours=data.get('daily_study_hours') 
         )
         
         # Xử lý M-N 'prior_readings'
@@ -37,23 +38,34 @@ def create_prompt(data):
         return None
 
 def get_prompt_by_id(prompt_id):
-    """Lấy prompt bằng ID."""
+    """Lấy prompt bằng ID, bao gồm cả user và prior_readings."""
     try:
-        return db.session.get(RoadmapPrompt, prompt_id)
+        return db.session.query(RoadmapPrompt).options(
+            # Tải thông tin User bằng JOIN
+            joinedload(RoadmapPrompt.user),
+            # Tải danh sách sách đã đọc bằng truy vấn thứ hai (hiệu quả)
+            selectinload(RoadmapPrompt.prior_readings)
+        ).get(prompt_id)
+        
     except Exception as e:
         logger.error(f"Lỗi khi lấy prompt {prompt_id}: {e}")
         return None
 
-def get_prompts_by_user(id, page=1, per_page=20):
+def get_prompts_by_user(user_id, page=1, per_page=20):
     """Lấy danh sách prompt của một user (phân trang)."""
     try:
+        # Khi lấy list, chúng ta cũng nên eager load
         return db.session.query(RoadmapPrompt)\
-            .filter_by(id=id)\
+            .filter_by(user_id=user_id)\
+            .options(
+                joinedload(RoadmapPrompt.user),
+                selectinload(RoadmapPrompt.prior_readings)
+            )\
             .paginate(page=page, per_page=per_page, error_out=False)
     except Exception as e:
-        logger.error(f"Lỗi khi lấy prompts cho user {id}: {e}")
+        logger.error(f"Lỗi khi lấy prompts cho user {user_id}: {e}")
         return None
-
+    
 def update_prompt(prompt_id, data):
     """Cập nhật một prompt."""
     prompt = get_prompt_by_id(prompt_id)

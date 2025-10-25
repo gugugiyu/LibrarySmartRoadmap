@@ -7,7 +7,7 @@ class RoadmapNode(db.Model):
     node_id = db.Column(db.Integer, primary_key=True) # 
     roadmap_id = db.Column(db.Integer, db.ForeignKey('roadmap.roadmap_id'), nullable=False, comment="Node này thuộc roadmap nào") # 
     parent_node_id = db.Column(db.Integer, db.ForeignKey('roadmap_node.node_id'), nullable=True, comment="Tự tham chiếu để tạo cây") # 
-    info_id = db.Column(db.Integer, db.ForeignKey('textual_information.info_id'), nullable=True, comment="Nội dung của node (trỏ tới Book hoặc Article)") # 
+    info_id = db.Column(db.Integer, db.ForeignKey('textual_information.id'), nullable=True, comment="Nội dung của node (trỏ tới Book hoặc Article)") # 
     node_order = db.Column(db.Integer, default=0, comment="Thứ tự của node trong cùng 1 cấp") # 
     is_completed = db.Column(db.Boolean, default=False) # 
     deleted_at = db.Column(db.DateTime, nullable=True, comment="Dùng cho soft-deletion (NULL = chưa xóa)") # 

@@ -10,7 +10,7 @@ def create_prompt():
     """
     Tạo một roadmap prompt mới.
     Endpoint: POST /api/v1/prompts
-    Body: { "id": 1, "major": "...", "prior_reading_ids": [1, 2] }
+    Body: { "user_id": 1, "major": "...", "prior_reading_ids": [1, 2] }
     """
     if not request.is_json:
         abort(400, description="Yêu cầu phải là JSON.")
@@ -18,7 +18,7 @@ def create_prompt():
     data = request.get_json()
     
     # Kiểm tra các trường bắt buộc
-    required_fields = ['id', 'major', 'self_assessment_level']
+    required_fields = ['user_id', 'major', 'self_assessment_level']
     if not all(field in data for field in required_fields):
         abort(400, description=f"Thiếu các trường bắt buộc: {required_fields}")
 
@@ -40,8 +40,8 @@ def get_prompt(prompt_id):
         
     return jsonify(prompt.to_dict()), 200
 
-@prompt_bp.route('/user/<int:id>', methods=['GET'])
-def get_prompts_by_user(id):
+@prompt_bp.route('/user/<int:user_id>', methods=['GET'])
+def get_prompts_by_user(user_id):
     """
     Lấy danh sách prompts của một user.
     Endpoint: GET /api/v1/prompts/user/1?page=1
@@ -49,7 +49,7 @@ def get_prompts_by_user(id):
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 20, type=int)
     
-    pagination = prompt_service.get_prompts_by_user(id, page, per_page)
+    pagination = prompt_service.get_prompts_by_user(user_id, page, per_page)
     if not pagination:
         abort(500, description="Lỗi khi truy vấn prompts.")
 

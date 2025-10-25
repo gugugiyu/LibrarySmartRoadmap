@@ -10,14 +10,14 @@ def create_roadmap():
     """
     Tạo một roadmap mới.
     Endpoint: POST /api/v1/roadmaps
-    Body: { "id": 1, "prompt_id": 1, "title": "My CS Roadmap" }
+    Body: { "userId": 1, "id": 1, "title": "My CS Roadmap" }
     """
     if not request.is_json:
         abort(400, description="Yêu cầu phải là JSON.")
         
     data = request.get_json()
     
-    required_fields = ['id', 'prompt_id', 'title']
+    required_fields = ['userId', 'id', 'title']
     if not all(field in data for field in required_fields):
         abort(400, description=f"Thiếu các trường bắt buộc: {required_fields}")
 
@@ -40,8 +40,8 @@ def get_roadmap(roadmap_id):
     # .to_dict() trên model Roadmap cần được mở rộng để trả về các node
     return jsonify(roadmap.to_dict()), 200
 
-@roadmap_bp.route('/user/<int:id>', methods=['GET'])
-def get_roadmaps_by_user(id):
+@roadmap_bp.route('/user/<int:user_id>', methods=['GET'])
+def get_roadmaps_by_user(user_id):
     """
     Lấy danh sách roadmaps của một user.
     Endpoint: GET /api/v1/roadmaps/user/1?page=1
@@ -49,7 +49,7 @@ def get_roadmaps_by_user(id):
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 20, type=int)
     
-    pagination = roadmap_service.get_roadmaps_by_user(id, page, per_page)
+    pagination = roadmap_service.get_roadmaps_by_user(user_id, page, per_page)
     if not pagination:
         abort(500, description="Lỗi khi truy vấn roadmaps.")
 

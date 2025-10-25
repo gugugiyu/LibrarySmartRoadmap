@@ -1,6 +1,6 @@
 from app.models.user import Users
 from app.extensions import db
-from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.exc import SQLAlchemyError # type: ignore
 import logging
 
 logger = logging.getLogger(__name__)

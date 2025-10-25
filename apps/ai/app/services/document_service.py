@@ -7,14 +7,13 @@ from datetime import datetime
 logger = logging.getLogger(__name__)
 
 def create_book(data):
-    """Tạo một Book mới (và TextualInformation)."""
+    """Tạo một Book mới (và TextualInformation)[cite: 4, 9]."""
     try:
         new_book = Book(
-            # TextualInformation fields
+            # TextualInformation fields [cite: 3]
             title=data.get('title'),
             source_url=data.get('source_url'),
-            crawled_at=data.get('crawled_at'),
-            # Book fields
+            # Book fields [cite: 4]
             isbn=data.get('isbn'),
             author=data.get('author'),
             publisher=data.get('publisher'),
@@ -31,14 +30,13 @@ def create_book(data):
         return None
 
 def create_article(data):
-    """Tạo một Article mới (và TextualInformation)."""
+    """Tạo một Article mới (và TextualInformation)[cite: 5, 10]."""
     try:
         new_article = Article(
-            # TextualInformation fields
+            # TextualInformation fields [cite: 3]
             title=data.get('title'),
             source_url=data.get('source_url'),
-            crawled_at=data.get('crawled_at'),
-            # Article fields
+            # Article fields [cite: 5]
             journal_name=data.get('journal_name'),
             doi=data.get('doi'),
             authors=data.get('authors'),
@@ -67,9 +65,9 @@ def get_all_documents(page=1, per_page=20, doc_type=None):
     try:
         query = db.session.query(TextualInformation)
         if doc_type == 'book':
-            query = query.filter(TextualInformation.info_type == 'book')
+            query = query.filter(TextualInformation.info_type == 'book') [cite: 3]
         elif doc_type == 'article':
-            query = query.filter(TextualInformation.info_type == 'article')
+            query = query.filter(TextualInformation.info_type == 'article') [cite: 3]
             
         return query.paginate(page=page, per_page=per_page, error_out=False)
     except Exception as e:

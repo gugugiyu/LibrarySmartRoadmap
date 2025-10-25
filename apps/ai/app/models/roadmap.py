@@ -5,7 +5,7 @@ class Roadmap(db.Model):
     __tablename__ = 'roadmap'
 
     roadmap_id = db.Column(db.Integer, primary_key=True) # [cite: 6]
-    prompt_id = db.Column(db.Integer, db.ForeignKey('roadmap_prompt.prompt_id'), nullable=False, comment="Roadmap này được tạo từ prompt nào") # [cite: 6]
+    prompt_id = db.Column(db.Integer, db.ForeignKey('roadmap_prompts.id'), nullable=False, comment="Roadmap này được tạo từ prompt nào") # [cite: 6]
     id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, comment="Roadmap này thuộc user nào") # [cite: 6]
     title = db.Column(db.String, comment="Tiêu đề của roadmap") # [cite: 6]
     description = db.Column(db.Text) # [cite: 6]

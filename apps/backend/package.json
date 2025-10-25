@@ -8,6 +8,9 @@
         "start": "nest start",
         "start:dev": "nest start --watch",
         "start:prod": "node dist/main.js",
+        "typeorm": "ts-node --project tsconfig.json -r tsconfig-paths/register ../../node_modules/typeorm/cli.js",
+        "typeorm:run-migrations": "npx typeorm -- migration:run",
+        "typeorm:revert-migration": "npx typeorm -- migration:revert",
         "build": "nest build",
         "lint": "eslint src --ext .ts"
     },
@@ -24,10 +27,13 @@
         "@nestjs/typeorm": "^11.0.0",
         "axios": "^1.12.2",
         "bcryptjs": "^3.0.2",
+        "crypto": "^1.0.1",
         "module-alias": "^2.2.3",
+        "node-worker-threads-pool": "^1.5.1",
         "passport": "^0.7.0",
         "passport-jwt": "^4.0.1",
         "pg": "^8.16.3",
+        "puppeteer": "^24.26.1",
         "reflect-metadata": "^0.2.2",
         "rxjs": "^7.8.2",
         "typeorm": "^0.3.27"
@@ -39,5 +45,9 @@
         "ts-node": "^10.9.2",
         "tsconfig-paths": "^4.2.0",
         "typescript": "^5.9.3"
+    },
+    "engines": {
+        "node": ">=20.0.0",
+        "npm": ">=10.0.0"
     }
 }

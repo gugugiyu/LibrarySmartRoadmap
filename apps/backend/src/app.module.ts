@@ -12,6 +12,7 @@ import { SearchModule } from './modules/search/search.module';
 import { StepsModule } from './modules/steps/steps.module';
 import { RoadmapsModule } from './modules/roadmaps/roadmaps.module';
 import { DevSeedModule } from './modules/dev-seed/dev-seed.module';
+import { CrawlerModule } from './modules/crawler/crawler.module';
 
 @Module({
     imports: [
@@ -30,6 +31,7 @@ import { DevSeedModule } from './modules/dev-seed/dev-seed.module';
         StepsModule,
         RoadmapsModule,
         DevSeedModule,
+        CrawlerModule,
     ],
 })
 export class AppModule {}

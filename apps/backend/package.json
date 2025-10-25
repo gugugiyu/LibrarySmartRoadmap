@@ -8,6 +8,9 @@
         "start": "nest start",
         "start:dev": "nest start --watch",
         "start:prod": "node dist/main.js",
+        "typeorm": "ts-node --project tsconfig.json -r tsconfig-paths/register ../../node_modules/typeorm/cli.js",
+        "typeorm:run-migrations": "npx typeorm -- migration:run",
+        "typeorm:revert-migration": "npx typeorm -- migration:revert",
         "build": "nest build",
         "lint": "eslint src --ext .ts"
     },

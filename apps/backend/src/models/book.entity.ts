@@ -10,6 +10,9 @@ export class Book {
     @JoinColumn({ name: 'id' })
     base: TextualInformation;
 
+    @Column({ type: 'text', default: '' })
+    abstract: string;
+
     @Column({ type: 'varchar', length: 32, unique: true })
     isbn: string;
 
